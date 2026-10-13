@@ -38,7 +38,7 @@ export function homeProcesser(pokemonData: any) {
     })
     stats.push({
         name: "total",
-        value: total
+        value: total 
     })
 
     const processedData = {
