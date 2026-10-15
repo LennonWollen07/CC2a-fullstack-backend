@@ -23,9 +23,9 @@ export async function getJSON(name: string) {
 
 export function homeProcesser(pokemonData: any) {
 
-    const types = [pokemonData.types[0].type.name]
+    let types = pokemonData.types[0].type.name
     if (pokemonData.types[1]) {
-        types.push(pokemonData.types[1].type.name)
+        types = types + ` / ${pokemonData.types[1].type.name}`
     }
 
     let total = 0;
@@ -38,14 +38,22 @@ export function homeProcesser(pokemonData: any) {
     })
     stats.push({
         name: "total",
-        value: total 
+        value: total
     })
+
+    let pokemonID = `${pokemonData.id}`;
+    console.log(pokemonID, "length: ", pokemonID.length);
+    for (let i = (3 - pokemonID.length); i > 0; i--) {
+        console.log("adding data");
+        pokemonID = "0" + pokemonID;
+
+    };
 
     const processedData = {
         name: pokemonData.name,
         types: types,
         stats: stats,
-        image: `https://www.serebii.net/pokemon/art/${pokemonData.id}.png`
+        image: `https://www.serebii.net/pokemon/art/${pokemonID}.png`
     }
     return processedData;
 }

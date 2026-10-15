@@ -20,6 +20,9 @@ function helloRequest(req: Request, res: Response) {
 app.get("/", helloRequest);
 
 async function loadPokemon(req: Request, res: Response) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   const name = req.query.name;
 
   if (!name) {
