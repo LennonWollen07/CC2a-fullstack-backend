@@ -1,7 +1,7 @@
 // --- API / API data ---
 const apiURL = "https://pokeapi.co/api/v2/pokemon";
 
-// gets pikachu JSON file then displays pikachu's data
+// gets JSON file then returns the data
 export async function getJSON(name: string) {
 
     // get response
@@ -14,41 +14,75 @@ export async function getJSON(name: string) {
 
     };
 
-    // get pikachu data from JSON
+    // get data from JSON
     const pokemonData = await response.json();
 
     return pokemonData
 
 };
 
+// esnures the stat bar dosent go to low or high
+function barRange(value: any, isTotalStat: boolean) {
+
+    // adjust the total value to be divided by 6
+    if(isTotalStat == true) {
+        value = value / 6;
+    }
+
+    if (value < 10) {
+        value = 10;
+    }
+    if (value > 100) {
+        value = 100;
+    }
+
+    return value;
+}
+
+// processes the data for the home page
 export function homeProcesser(pokemonData: any) {
 
+    // stores the types as TYPE or TYPE / TYPE depending on how many there are
     let types = pokemonData.types[0].type.name
+
     if (pokemonData.types[1]) {
         types = types + ` / ${pokemonData.types[1].type.name}`
     }
 
+    // gets all six stats and finds the stat total
     let total = 0;
+
     const stats = pokemonData.stats.map((stat: any) => {
+
         total = total + stat.base_stat;
+
         return {
+
             name: stat.stat.name,
-            value: stat.base_stat
+            value: stat.base_stat,
+            length: barRange(stat.base_stat, false)
+
         }
-    })
-    stats.push({
-        name: "total",
-        value: total
+
     })
 
+    // appends the total stat to the stat data
+    stats.push({
+        name: "total",
+        value: total,
+        length: barRange(total, true)
+    })
+
+    // ensures that IDs have atleast 3 digits (1 -> 001 / 33 -> 033)
     let pokemonID = `${pokemonData.id}`;
-    console.log(pokemonID, "length: ", pokemonID.length);
+
     for (let i = (3 - pokemonID.length); i > 0; i--) {
         console.log("adding data");
         pokemonID = "0" + pokemonID;
 
     };
 
+    // the preocessed data
     const processedData = {
         name: pokemonData.name,
         types: types,
