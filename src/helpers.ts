@@ -58,9 +58,9 @@ export function homeProcesser(pokemonData: any) {
 
         return {
 
-            name: stat.stat.name,
-            value: stat.base_stat,
-            length: barRange(stat.base_stat, false)
+            name: stat.stat.name, // name of pokemon
+            value: stat.base_stat, // stat value
+            length: barRange(stat.base_stat, false) // length of the statbar
 
         }
 
