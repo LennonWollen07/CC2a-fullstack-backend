@@ -1,5 +1,6 @@
 // --- API / API data ---
 const apiURL = "https://pokeapi.co/api/v2/pokemon";
+const TOTAL_POKEMON = 1025
 
 // gets JSON file then returns the data
 export async function getJSON(name: string) {
@@ -40,7 +41,7 @@ function barRange(value: any, isTotalStat: boolean) {
 }
 
 // processes the data for the home page
-export function homeProcesser(pokemonData: any) {
+export function pokemonProcessor(pokemonData: any) {
 
     // stores the types as TYPE or TYPE / TYPE depending on how many there are
     let types = pokemonData.types[0].type.name
@@ -89,5 +90,36 @@ export function homeProcesser(pokemonData: any) {
         stats: stats,
         image: `https://www.serebii.net/pokemon/art/${pokemonID}.png`
     }
+
     return processedData;
+}
+
+// gets two pokemon
+export async function twoPokemonProcessor() {
+    let idOne = Math.round(Math.random() * TOTAL_POKEMON)
+    let idTwo = Math.round(Math.random() * TOTAL_POKEMON)
+
+    // esnure they are not the same
+    while(idOne == idTwo) {
+        idTwo = Math.round(Math.random() * TOTAL_POKEMON)
+    }
+
+    // try to get both pokemon
+    try {
+        const pokemonData1 = await getJSON(`${idOne}`)
+        const pokemonData2 = await getJSON(`${idTwo}`)
+        let processedPokemonData1 = pokemonProcessor(pokemonData1)
+        let processedPokemonData2 = pokemonProcessor(pokemonData2)
+
+        const processedData = [
+            processedPokemonData1,
+            processedPokemonData2
+        ]
+
+        return processedData
+        
+    }
+    catch(error) {
+        return error;
+    }
 }

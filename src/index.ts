@@ -5,24 +5,22 @@
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
  */
 
-import express, { type Express, type Request, type Response } from "express";
-import { getJSON, homeProcesser } from "./helpers.ts";
+import express, { type Express, type Request, type Response, type NextFunction } from "express";
+import { getJSON, pokemonProcessor, twoPokemonProcessor } from "./helpers.ts";
 
 const app: Express = express();
 
 app.use(express.static('public'));
 
-function helloRequest(req: Request, res: Response) {
-  console.log(req.query);
-  res.send(`Hello ${req.query.name}`);
-}
-
-app.get("/", helloRequest);
-
-async function loadPokemon(req: Request, res: Response) {
+app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  next();
+})
+
+// load a pokemon
+async function loadPokemon(req: Request, res: Response) {
   const name = req.query.name;
 
   if (!name) {
@@ -32,13 +30,19 @@ async function loadPokemon(req: Request, res: Response) {
 
   try{
     const data = await getJSON(name as string)
-    res.send(homeProcesser(data))
+    res.send(pokemonProcessor(data))
   }
   catch(error) {
     res.send((error as Error).message);
   }
+
+}
+
+// load two pokemon
+async function loadTwoPokemon(req: Request, res: Response) {
+    res.send(await twoPokemonProcessor())
 }
 
 app.get("/pokemon", loadPokemon);
-
+app.get("/2pokemon", loadTwoPokemon)
 app.listen(3000);
